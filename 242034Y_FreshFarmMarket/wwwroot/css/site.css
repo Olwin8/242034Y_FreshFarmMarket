@@ -1,0 +1,79 @@
+﻿/* ===== FreshFarmMarket layout: footer always at bottom, no “extra space” beyond footer ===== */
+html, body {
+    height: 100%;
+}
+
+body.ffm-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+}
+
+/* Main grows, footer stays at bottom */
+.ffm-main {
+    flex: 1 0 auto;
+}
+
+/* Footer never floats mid-page */
+.ffm-footer {
+    flex-shrink: 0;
+}
+
+/* ===== Dropdown menu theme consistency (replace Bootstrap blue focus/active) ===== */
+.dropdown-menu .dropdown-item {
+    transition: background-color .15s ease, color .15s ease;
+}
+
+.dropdown-menu .dropdown-item:hover,
+.dropdown-menu .dropdown-item:focus {
+    background-color: rgba(46, 204, 113, 0.15); /* light green */
+    color: #229954; /* leaf green */
+}
+
+.dropdown-menu .dropdown-item.active,
+.dropdown-menu .dropdown-item:active {
+    background-color: rgba(46, 204, 113, 0.22); /* stronger green */
+    color: #229954;
+}
+
+.dropdown-menu .dropdown-item:focus-visible {
+    outline: 2px solid rgba(46, 204, 113, 0.55);
+    outline-offset: 2px;
+}
+
+/* Ensure icons match the green on hover/active */
+.dropdown-menu .dropdown-item i {
+    width: 18px;
+    text-align: center;
+}
+
+/* ============================= */
+/* Top Navbar Improvements */
+/* ============================= */
+
+/* 1️⃣ Make logged-in user email fully white (remove Bootstrap translucency) */
+.navbar-dark .navbar-nav .nav-link,
+.navbar-dark .navbar-nav .dropdown-toggle {
+    color: #ffffff !important;
+    opacity: 1 !important;
+}
+
+/* Keep it white on hover/focus too */
+.navbar-dark .navbar-nav .nav-link:hover,
+.navbar-dark .navbar-nav .dropdown-toggle:hover,
+.navbar-dark .navbar-nav .nav-link:focus,
+.navbar-dark .navbar-nav .dropdown-toggle:focus {
+    color: #ffffff !important;
+    opacity: 1 !important;
+}
+
+/* 2️⃣ Increase spacing between brand and Home */
+.navbar .navbar-brand {
+    margin-right: 2.5rem; /* increase gap */
+}
+
+/* Optional: ensure Home link has some breathing space */
+.navbar .navbar-nav .nav-item:first-child {
+    margin-left: 0.5rem;
+}

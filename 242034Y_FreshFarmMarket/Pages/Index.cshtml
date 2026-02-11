@@ -1,0 +1,537 @@
+﻿@page
+@model _242034Y_FreshFarmMarket.Pages.IndexModel
+@{
+    ViewData["Title"] = "Dashboard - Fresh Farm Market";
+    Layout = "_Layout";
+}
+
+@section Styles {
+    <style>
+        :root {
+            --primary-green: #2ecc71;
+            --dark-green: #27ae60;
+            --light-green: #d5f4e6;
+            --cream-white: #f9f6f0;
+            --leaf-green: #229954;
+            --success-gradient: linear-gradient(90deg, #2ecc71, #229954);
+        }
+
+        body {
+            background: linear-gradient(135deg, #f9f6f0 0%, #e8f5e9 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+
+        .dashboard-container {
+            padding: 2rem 0;
+        }
+
+        .dashboard-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(46, 204, 113, 0.1);
+            border: 2px solid var(--light-green);
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+            .dashboard-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 15px 40px rgba(46, 204, 113, 0.2);
+            }
+
+        .welcome-header {
+            text-align: center;
+            color: var(--dark-green);
+            margin-bottom: 2rem;
+        }
+
+        .avatar-circle {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: var(--success-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: white;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 8px 20px rgba(46, 204, 113, 0.3);
+            overflow: hidden;
+        }
+
+            .avatar-circle img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+        .session-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            background: rgba(46, 204, 113, 0.1);
+            color: var(--dark-green);
+        }
+
+        .idcard-wrap {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        .idcard {
+            border-radius: 22px;
+            overflow: hidden;
+            border: 2px solid var(--light-green);
+            box-shadow: 0 18px 55px rgba(46, 204, 113, 0.18);
+            position: relative;
+            background: white;
+        }
+
+        .idcard-top {
+            background: var(--success-gradient);
+            color: white;
+            padding: 1.4rem 1.6rem;
+            position: relative;
+        }
+
+            .idcard-top::after {
+                content: "";
+                position: absolute;
+                right: -60px;
+                top: -60px;
+                width: 180px;
+                height: 180px;
+                background: rgba(255,255,255,0.14);
+                border-radius: 50%;
+            }
+
+        .idcard-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+            .idcard-title h3 {
+                margin: 0;
+                font-weight: 800;
+                letter-spacing: 0.4px;
+            }
+
+        .idcard-chip {
+            width: 54px;
+            height: 40px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.25);
+            border: 1px solid rgba(255,255,255,0.35);
+            display: grid;
+            place-items: center;
+            font-weight: 800;
+        }
+
+        .idcard-body {
+            padding: 1.6rem;
+            display: grid;
+            grid-template-columns: 160px 1fr;
+            gap: 1.5rem;
+            align-items: start;
+        }
+
+        .idcard-photo {
+            border-radius: 18px;
+            border: 2px solid var(--light-green);
+            background: rgba(46, 204, 113, 0.06);
+            overflow: hidden;
+            width: 160px;
+            height: 200px;
+            display: grid;
+            place-items: center;
+            position: relative;
+        }
+
+            .idcard-photo img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            .idcard-photo .fallback {
+                font-size: 3rem;
+                font-weight: 900;
+                color: var(--dark-green);
+            }
+
+        .idcard-fields {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .field {
+            background: #fff;
+            border: 1px solid var(--light-green);
+            border-radius: 14px;
+            padding: 0.9rem 1rem;
+            transition: all 0.25s ease;
+        }
+
+            .field:hover {
+                transform: translateX(4px);
+                box-shadow: 0 10px 24px rgba(46, 204, 113, 0.12);
+            }
+
+        .field-label {
+            font-size: 0.78rem;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .field-value {
+            font-weight: 700;
+            color: #1f2d3d;
+            word-break: break-word;
+        }
+
+        .idcard-bottom {
+            padding: 1.1rem 1.6rem;
+            border-top: 1px solid var(--light-green);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem 1rem;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .badge-soft {
+            background: rgba(46, 204, 113, 0.12);
+            color: var(--dark-green);
+            border: 1px solid rgba(46, 204, 113, 0.25);
+            padding: 0.45rem 0.8rem;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .action-btn {
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--success-gradient);
+            color: white;
+        }
+
+            .btn-primary:hover {
+                color: white;
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(46, 204, 113, 0.3);
+            }
+
+        .btn-secondary {
+            background: white;
+            color: var(--primary-green);
+            border: 2px solid var(--primary-green);
+        }
+
+            .btn-secondary:hover {
+                background: rgba(46, 204, 113, 0.1);
+                color: var(--dark-green);
+                transform: translateY(-2px);
+            }
+
+        .btn-danger {
+            background: linear-gradient(90deg, #e74c3c, #c0392b);
+            color: white;
+        }
+
+            .btn-danger:hover {
+                color: white;
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(231, 76, 60, 0.3);
+            }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @@keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @@media (max-width: 992px) {
+            .idcard-body {
+                grid-template-columns: 1fr;
+            }
+
+            .idcard-photo {
+                width: 180px;
+                height: 220px;
+                margin: 0 auto;
+            }
+
+            .idcard-fields {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+}
+
+<div class="dashboard-container fade-in">
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <div class="welcome-header">
+            <div class="avatar-circle">
+                @if (!string.IsNullOrEmpty(Model.UserPhotoPath))
+                {
+                    <img src="~/@Model.UserPhotoPath" alt="Profile Photo" />
+                }
+                else
+                {
+                    @Model.UserInitial
+                }
+            </div>
+
+            <h1 class="display-5 fw-bold mb-2">Welcome back, @Model.UserFullName!</h1>
+            <p class="mb-0 text-muted">Fresh Farm Market Secure Dashboard</p>
+
+            <div class="d-flex justify-content-center align-items-center gap-3 mt-3 flex-wrap">
+                <span class="session-status">
+                    <i class="fas fa-shield-alt me-1"></i>
+                    Session Protected
+                </span>
+
+                <span class="badge bg-success bg-opacity-10 text-success">
+                    <i class="fas fa-clock me-1"></i>
+                    Session expires in: <span id="sessionTimer">02:00</span>
+                </span>
+            </div>
+        </div>
+
+        <div class="dashboard-card">
+            <div class="idcard-wrap">
+                <div class="idcard">
+                    <div class="idcard-top">
+                        <div class="idcard-title">
+                            <div>
+                                <div class="fw-semibold" style="opacity:.9;">Fresh Farm Market</div>
+                                <h3 class="mt-1"><i class="fas fa-id-card me-2"></i>Member Digital ID</h3>
+                            </div>
+                            <div class="idcard-chip">
+                                <i class="fas fa-leaf"></i>
+                            </div>
+                        </div>
+                        <div class="mt-2" style="opacity:.95;">
+                            <small><i class="fas fa-check-circle me-1"></i> Verified session</small>
+                            <span class="ms-3"><small><i class="fas fa-history me-1"></i> Last login: @Model.LastLoginTime</small></span>
+                        </div>
+                    </div>
+
+                    <div class="idcard-body">
+                        <div class="idcard-photo">
+                            @if (!string.IsNullOrEmpty(Model.UserPhotoPath))
+                            {
+                                <img src="~/@Model.UserPhotoPath" alt="Member Photo" />
+                            }
+                            else
+                            {
+                                <div class="fallback">@Model.UserInitial</div>
+                            }
+                        </div>
+
+                        <div class="idcard-fields">
+                            <div class="field">
+                                <div class="field-label"><i class="fas fa-user"></i> Full Name</div>
+                                <div class="field-value">@Model.UserFullName</div>
+                            </div>
+
+                            <div class="field">
+                                <div class="field-label"><i class="fas fa-envelope"></i> Email</div>
+                                <div class="field-value">@Model.UserEmail</div>
+                            </div>
+
+                            <div class="field">
+                                <div class="field-label"><i class="fas fa-phone"></i> Mobile</div>
+                                <div class="field-value">@(string.IsNullOrEmpty(Model.UserMobileNo) ? "Not provided" : Model.UserMobileNo)</div>
+                            </div>
+
+                            <div class="field">
+                                <div class="field-label"><i class="fas fa-venus-mars"></i> Gender</div>
+                                <div class="field-value">@Model.UserGender</div>
+                            </div>
+
+                            <div class="field" style="grid-column: 1 / -1;">
+                                <div class="field-label"><i class="fas fa-home"></i> Delivery Address</div>
+                                <div class="field-value">@(string.IsNullOrEmpty(Model.UserAddress) ? "Not provided" : Model.UserAddress)</div>
+                            </div>
+
+                            @if (!string.IsNullOrEmpty(Model.MaskedCreditCard))
+                            {
+                                <div class="field" style="grid-column: 1 / -1;">
+                                    <div class="field-label"><i class="fas fa-credit-card"></i> Credit Card (Masked)</div>
+                                    <div class="field-value">@Model.MaskedCreditCard</div>
+                                </div>
+                            }
+
+                            @if (!string.IsNullOrEmpty(Model.UserAboutMe))
+                            {
+                                <div class="field" style="grid-column: 1 / -1;">
+                                    <div class="field-label"><i class="fas fa-heart"></i> About Me</div>
+                                    <div class="field-value">@Model.UserAboutMe</div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="idcard-bottom">
+                        <span class="badge-soft">
+                            <i class="fas fa-calendar-alt"></i> Member since: @Model.MemberSince
+                        </span>
+                        <span class="badge-soft">
+                            <i class="fas fa-shield-alt"></i> Security Score: @Model.SecurityScore/100
+                        </span>
+                        <span class="badge-soft">
+                            <i class="fas fa-laptop-house"></i> Active Sessions: @Model.ActiveSessions
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-card">
+            <h3 class="text-success mb-4"><i class="fas fa-bolt me-2"></i>Quick Actions</h3>
+            <div class="d-flex flex-wrap gap-2">
+                <a href="/ChangePassword" class="action-btn btn-secondary">
+                    <i class="fas fa-key"></i> Change Password
+                </a>
+
+                @* ✅ Only Admin can see Audit Log button *@
+                @if (User.IsInRole("Admin"))
+                {
+                    <a href="/AuditLog" class="action-btn btn-secondary">
+                        <i class="fas fa-history"></i> View Audit Logs
+                    </a>
+                }
+
+                <form method="post" asp-page="/Logout" class="d-inline">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="action-btn btn-danger">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </form>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="dashboard-card text-center">
+            <div class="avatar-circle mb-4">F</div>
+
+            <h1 class="display-5 fw-bold text-success mb-3">Fresh Farm Market</h1>
+            <p class="lead text-muted mb-4">
+                Singapore's premier online marketplace for fresh, organic produce
+            </p>
+
+            <div class="d-flex flex-wrap gap-2 justify-content-center">
+                <a href="/Login" class="action-btn btn-primary">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </a>
+                <a href="/Register" class="action-btn btn-secondary">
+                    <i class="fas fa-user-plus"></i> Register
+                </a>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        // ✅ 2-minute inactivity session countdown (visible + auto logout)
+        let sessionTimeoutSeconds = 2 * 60; // 2:00
+        let tickInterval = null;
+        let inactivityResetTimer = null;
+
+        function fmt(seconds) {
+            const m = Math.floor(seconds / 60);
+            const s = seconds % 60;
+            return `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+        }
+
+        function renderTimer() {
+            const el = document.getElementById('sessionTimer');
+            if (el) el.textContent = fmt(sessionTimeoutSeconds);
+        }
+
+        function hardLogout() {
+            window.location.href = '/Logout?timeout=true';
+        }
+
+        function resetCountdown() {
+            sessionTimeoutSeconds = 2 * 60;
+            renderTimer();
+
+            if (inactivityResetTimer) clearTimeout(inactivityResetTimer);
+            inactivityResetTimer = setTimeout(() => {
+                hardLogout();
+            }, 2 * 60 * 1000);
+        }
+
+        function startTick() {
+            if (tickInterval) clearInterval(tickInterval);
+
+            tickInterval = setInterval(() => {
+                sessionTimeoutSeconds--;
+                renderTimer();
+
+                if (sessionTimeoutSeconds <= 0) {
+                    clearInterval(tickInterval);
+                    hardLogout();
+                }
+            }, 1000);
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                        @:renderTimer();
+                        @:resetCountdown();
+                        @:startTick();
+                        @:['mousemove', 'keypress', 'click', 'scroll', 'touchstart'].forEach(evt => {
+                        @:  document.addEventListener(evt, resetCountdown, { passive: true });
+                        @:});
+            }
+        });
+    </script>
+}

@@ -1,0 +1,34 @@
+﻿@page
+@model _242034Y_FreshFarmMarket.Pages.LoginWith2faModel
+@{
+    ViewData["Title"] = "Two-Factor Verification";
+    Layout = "_Layout";
+}
+
+<div class="container" style="max-width:600px; margin-top:40px;">
+    <h2>Two-Factor Verification</h2>
+    <p class="text-muted">We sent a verification code to your email.</p>
+
+    <form method="post">
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+        <input type="hidden" asp-for="ReturnUrl" />
+
+        <div class="mb-3">
+            <label class="form-label fw-semibold">Verification Code</label>
+            <input asp-for="Code" class="form-control" />
+            <span asp-validation-for="Code" class="text-danger small"></span>
+        </div>
+
+        <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" asp-for="RememberMachine" id="rememberMachine">
+            <label class="form-check-label" for="rememberMachine">Remember this device</label>
+        </div>
+
+        <button type="submit" class="btn btn-success w-100">Verify</button>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

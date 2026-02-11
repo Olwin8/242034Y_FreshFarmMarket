@@ -1,0 +1,314 @@
+﻿@page
+@model _242034Y_FreshFarmMarket.Pages.AuditLogModel
+@{
+    ViewData["Title"] = "Audit Logs - Fresh Farm Market";
+    Layout = "_Layout";
+}
+
+@section Styles {
+    <style>
+        :root {
+            --primary-green: #2ecc71;
+            --dark-green: #27ae60;
+            --light-green: #d5f4e6;
+            --cream-white: #f9f6f0;
+            --leaf-green: #229954;
+            --success-gradient: linear-gradient(90deg, #2ecc71, #229954);
+            /* ✅ Action colors (match your theme / clean + readable) */
+            --blue: #3498db;
+            --blue-soft: rgba(52, 152, 219, 0.12);
+            --orange: #f39c12;
+            --orange-soft: rgba(243, 156, 18, 0.14);
+            --red: #e74c3c;
+            --red-soft: rgba(231, 76, 60, 0.12);
+            --purple: #9b59b6;
+            --purple-soft: rgba(155, 89, 182, 0.12);
+            --gray: #6c757d;
+            --gray-soft: rgba(108, 117, 125, 0.12);
+        }
+
+        body {
+            background: linear-gradient(135deg, #f9f6f0 0%, #e8f5e9 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+
+        .audit-wrap {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .audit-card {
+            background: white;
+            border-radius: 22px;
+            box-shadow: 0 18px 55px rgba(46, 204, 113, 0.18);
+            border: 2px solid var(--light-green);
+            overflow: hidden;
+        }
+
+        .audit-header {
+            background: var(--success-gradient);
+            color: white;
+            padding: 1.6rem 1.8rem;
+        }
+
+        .filters {
+            padding: 1.2rem 1.8rem;
+            border-bottom: 1px solid var(--light-green);
+            background: rgba(46, 204, 113, 0.06);
+        }
+
+        .form-control {
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: .85rem 1rem;
+            background: var(--cream-white);
+        }
+
+            .form-control:focus {
+                border-color: var(--primary-green);
+                box-shadow: 0 0 0 0.25rem rgba(46, 204, 113, 0.25);
+                background: white;
+            }
+
+        .btn-green {
+            background: var(--success-gradient);
+            border: none;
+            color: white;
+            padding: .9rem 1.2rem;
+            border-radius: 14px;
+            font-weight: 700;
+            width: 100%;
+        }
+
+        .table-area {
+            padding: 1.4rem 1.8rem 1.8rem;
+        }
+
+        .table thead th {
+            background: rgba(46, 204, 113, 0.12);
+            color: var(--dark-green);
+            border-bottom: 2px solid var(--light-green);
+            font-weight: 800;
+        }
+
+        /* ✅ Base pill style */
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: .45rem;
+            padding: .35rem .7rem;
+            border-radius: 999px;
+            font-weight: 800;
+            font-size: .85rem;
+            border: 1px solid rgba(46, 204, 113, 0.25);
+            background: rgba(46, 204, 113, 0.10);
+            color: var(--dark-green);
+            white-space: nowrap;
+        }
+
+        /* ✅ Result pills */
+        .pill-fail {
+            border-color: rgba(231, 76, 60, 0.35);
+            background: rgba(231, 76, 60, 0.10);
+            color: #c0392b;
+        }
+
+        /* ✅ Action-specific pills */
+        .pill-action-login {
+            border-color: rgba(46, 204, 113, 0.35);
+            background: rgba(46, 204, 113, 0.12);
+            color: var(--dark-green);
+        }
+
+        .pill-action-failed {
+            border-color: rgba(231, 76, 60, 0.40);
+            background: var(--red-soft);
+            color: #c0392b;
+        }
+
+        .pill-action-logout {
+            border-color: rgba(108, 117, 125, 0.35);
+            background: var(--gray-soft);
+            color: #495057;
+        }
+
+        .pill-action-registration {
+            border-color: rgba(52, 152, 219, 0.35);
+            background: var(--blue-soft);
+            color: #2c6aa0;
+        }
+
+        .pill-action-profile {
+            border-color: rgba(243, 156, 18, 0.40);
+            background: var(--orange-soft);
+            color: #b9770e;
+        }
+
+        .pill-action-security {
+            border-color: rgba(155, 89, 182, 0.40);
+            background: var(--purple-soft);
+            color: #7d3c98;
+        }
+
+        .pill-action-other {
+            border-color: rgba(108, 117, 125, 0.30);
+            background: rgba(108, 117, 125, 0.08);
+            color: #6c757d;
+        }
+
+        .mono {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: .85rem;
+        }
+
+        .small-muted {
+            color: #6c757d;
+            font-size: .9rem;
+        }
+    </style>
+}
+
+@functions {
+    private string GetActionPillClass(string action)
+    {
+        var a = (action ?? string.Empty).Trim().ToLowerInvariant();
+
+        if (a.Contains("login") && a.Contains("failed")) return "pill-action-failed";
+        if (a.Contains("login") && a.Contains("success")) return "pill-action-login";
+        if (a == "logout" || a.Contains("logout")) return "pill-action-logout";
+        if (a.Contains("registration") || a.Contains("register")) return "pill-action-registration";
+        if (a.Contains("profile")) return "pill-action-profile";
+        if (a.Contains("security") || a.Contains("2fa") || a.Contains("otp")) return "pill-action-security";
+
+        return "pill-action-other";
+    }
+
+    private string GetActionIcon(string action)
+    {
+        var a = (action ?? string.Empty).Trim().ToLowerInvariant();
+
+        if (a.Contains("login") && a.Contains("failed")) return "fa-xmark";
+        if (a.Contains("login") && a.Contains("success")) return "fa-check";
+        if (a.Contains("logout")) return "fa-right-from-bracket";
+        if (a.Contains("registration") || a.Contains("register")) return "fa-user-plus";
+        if (a.Contains("profile")) return "fa-user-pen";
+        if (a.Contains("security") || a.Contains("2fa") || a.Contains("otp")) return "fa-shield-halved";
+
+        return "fa-tag";
+    }
+}
+
+<div class="audit-wrap">
+    <div class="audit-card">
+        <div class="audit-header">
+            <h2 class="mb-1"><i class="fas fa-history me-2"></i>Audit Logs</h2>
+            <div style="opacity:.95;">Admin-only view of user activities (login, logout, security events, etc.)</div>
+        </div>
+
+        <div class="filters">
+            <form method="get" class="row g-2 align-items-end">
+                <div class="col-md-2">
+                    <label class="form-label fw-semibold">Days</label>
+                    <input class="form-control" type="number" min="1" max="365" name="Days" value="@Model.Days" />
+                </div>
+
+                <div class="col-md-5">
+                    <label class="form-label fw-semibold">Email contains</label>
+                    <input class="form-control" name="Email" value="@Model.Email" placeholder="e.g. user@example.com" />
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Action contains</label>
+                    <input class="form-control" name="Action" value="@Model.Action" placeholder="e.g. Login, 2FA, Logout" />
+                </div>
+
+                <div class="col-md-2 d-grid">
+                    <button class="btn-green" type="submit">
+                        <i class="fas fa-filter me-2"></i>Filter
+                    </button>
+                </div>
+
+                <div class="col-12 mt-2 small-muted">
+                    Showing <strong>@Model.Logs.Count</strong> log(s) (max 1000) from last <strong>@Model.Days</strong> day(s).
+                </div>
+            </form>
+        </div>
+
+        <div class="table-area">
+            @if (Model.Logs.Count == 0)
+            {
+                <div class="alert alert-success rounded-4 mb-0">
+                    <i class="fas fa-check-circle me-2"></i>No logs found for the selected filters.
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table align-middle">
+                        <thead>
+                            <tr>
+                                <th style="min-width:170px;">Timestamp</th>
+                                <th style="min-width:230px;">Email</th>
+                                <th style="min-width:170px;">Action</th>
+                                <th>Description</th>
+                                <th style="min-width:120px;">Result</th>
+                                <th style="min-width:190px;">IP</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var log in Model.Logs)
+                            {
+                                var actionClass = GetActionPillClass(log.Action);
+                                var actionIcon = GetActionIcon(log.Action);
+
+                                <tr>
+                                    <td class="mono">@log.Timestamp.ToString("dd MMM yyyy, HH:mm:ss")</td>
+                                    <td>@log.Email</td>
+
+                                    <td>
+                                        <span class="pill @actionClass">
+                                            <i class="fas @actionIcon"></i>
+                                            @log.Action
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <div>@log.Description</div>
+                                        @if (!string.IsNullOrWhiteSpace(log.AdditionalInfo))
+                                        {
+                                            <div class="small-muted">Info: @log.AdditionalInfo</div>
+                                        }
+                                    </td>
+
+                                    <td>
+                                        @if (log.Success)
+                                        {
+                                            <span class="pill"><i class="fas fa-check"></i>Success</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="pill pill-fail"><i class="fas fa-xmark"></i>Failed</span>
+                                        }
+                                    </td>
+
+                                    <td class="mono">@log.IpAddress</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- ✅ Legend (ProfileUpdate removed as requested) -->
+                <div class="mt-3 small-muted">
+                    <span class="pill pill-action-login me-2"><i class="fas fa-check"></i>LoginSuccess</span>
+                    <span class="pill pill-action-failed me-2"><i class="fas fa-xmark"></i>LoginFailed</span>
+                    <span class="pill pill-action-logout me-2"><i class="fas fa-right-from-bracket"></i>Logout</span>
+                    <span class="pill pill-action-registration me-2"><i class="fas fa-user-plus"></i>Registration</span>
+                    <span class="pill pill-action-security"><i class="fas fa-shield-halved"></i>Security/2FA</span>
+                </div>
+            }
+        </div>
+    </div>
+</div>

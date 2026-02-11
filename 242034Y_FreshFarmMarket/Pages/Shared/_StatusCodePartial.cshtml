@@ -1,0 +1,40 @@
+﻿@model int
+
+@{
+    var code = Model;
+
+    string title;
+    string message;
+    string codeColorClass;
+
+    if (code == 404)
+    {
+        title = "Page Not Found";
+        message = "The page you are looking for does not exist or may have been moved.";
+        codeColorClass = "text-success";
+    }
+    else if (code == 403)
+    {
+        title = "Access Denied";
+        message = "You do not have permission to access this page.";
+        codeColorClass = "text-danger";
+    }
+    else
+    {
+        title = "Unexpected Error";
+        message = "Something went wrong. Please try again later.";
+        codeColorClass = "text-warning";
+    }
+}
+
+<div class="container text-center" style="padding: 80px 0;">
+    <div class="card shadow-lg border-0 rounded-4 p-5">
+        <h1 class="display-3 @codeColorClass fw-bold">@code</h1>
+        <h4 class="mb-3">@title</h4>
+        <p class="text-muted mb-4">@message</p>
+
+        <a href="/" class="btn btn-success px-4">
+            <i class="fas fa-home me-2"></i>Return Home
+        </a>
+    </div>
+</div>

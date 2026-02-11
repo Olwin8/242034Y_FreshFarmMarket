@@ -1,0 +1,1242 @@
+﻿@page
+@model _242034Y_FreshFarmMarket.Pages.RegisterModel
+@{
+    ViewData["Title"] = "Join Fresh Farm Market";
+    Layout = "_Layout";
+}
+
+@section Styles {
+    <style>
+        :root {
+            --primary-green: #2ecc71;
+            --dark-green: #27ae60;
+            --light-green: #d5f4e6;
+            --fresh-yellow: #f1c40f;
+            --organic-brown: #8b4513;
+            --cream-white: #f9f6f0;
+            --leaf-green: #229954;
+            --soil-brown: #a0522d;
+            --weak-red: #dc3545;
+            --medium-orange: #fd7e14;
+            --good-yellow: #ffc107;
+            --strong-blue: #20c997;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f9f6f0 0%, #e8f5e9 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+
+        .register-container {
+            background: white;
+            border-radius: 25px;
+            box-shadow: 0 20px 60px rgba(46, 204, 113, 0.15);
+            overflow: hidden;
+            border: 2px solid var(--light-green);
+            position: relative;
+            margin: 2rem auto;
+            max-width: 1200px;
+        }
+
+        .register-header {
+            background: linear-gradient(90deg, var(--primary-green), var(--leaf-green));
+            color: white;
+            padding: 2.5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .register-header::before {
+                content: '';
+                position: absolute;
+                top: -50%;
+                left: -50%;
+                width: 200%;
+                height: 200%;
+                background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+                background-size: 30px 30px;
+                animation: float 20s linear infinite;
+            }
+
+        .farm-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            display: inline-block;
+            animation: bounce 2s infinite;
+        }
+
+        .form-section {
+            padding: 3rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.8rem;
+            position: relative;
+        }
+
+        .form-label {
+            color: var(--organic-brown);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-control {
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 1rem 1.2rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: var(--cream-white);
+        }
+
+            .form-control:focus {
+                border-color: var(--primary-green);
+                box-shadow: 0 0 0 0.25rem rgba(46, 204, 113, 0.25);
+                background: white;
+            }
+
+        .password-strength-container {
+            margin-top: 1rem;
+            padding: 1.5rem;
+            border-radius: 15px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            transition: all 0.3s ease;
+        }
+
+        .strength-meter {
+            height: 10px;
+            background: #e9ecef;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 1rem 0;
+            position: relative;
+        }
+
+        .strength-fill {
+            height: 100%;
+            width: 0%;
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border-radius: 5px;
+        }
+
+        .strength-text {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-top: 0.5rem;
+        }
+
+        .suggestion-list {
+            list-style: none;
+            padding: 0;
+            margin: 1rem 0 0 0;
+        }
+
+            .suggestion-list li {
+                padding: 0.4rem 0;
+                color: #6c757d;
+                font-size: 0.9rem;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+                .suggestion-list li i {
+                    font-size: 0.8rem;
+                }
+
+                .suggestion-list li.valid {
+                    color: var(--primary-green);
+                }
+
+                .suggestion-list li.invalid {
+                    color: var(--weak-red);
+                }
+
+        .photo-upload {
+            border: 3px dashed var(--primary-green);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            background: rgba(46, 204, 113, 0.05);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+            .photo-upload:hover {
+                background: rgba(46, 204, 113, 0.1);
+                border-color: var(--dark-green);
+            }
+
+            .photo-upload i {
+                font-size: 3rem;
+                color: var(--primary-green);
+                margin-bottom: 1rem;
+            }
+
+        .btn-register {
+            background: linear-gradient(90deg, var(--primary-green), var(--leaf-green));
+            border: none;
+            color: white;
+            padding: 1.2rem 2rem;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            width: 100%;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .btn-register:hover:not(:disabled) {
+                transform: translateY(-3px);
+                box-shadow: 0 10px 20px rgba(46, 204, 113, 0.3);
+                color: white;
+            }
+
+            .btn-register:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+            }
+
+        .feature-card {
+            background: rgba(46, 204, 113, 0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            margin: 1rem 0;
+            border: 1px solid rgba(46, 204, 113, 0.2);
+        }
+
+            .feature-card i {
+                font-size: 2.5rem;
+                color: var(--primary-green);
+                margin-bottom: 1rem;
+            }
+
+        .floating-animation {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+
+        /* ✅ Force reCAPTCHA v3 badge to show (some global CSS may hide it) */
+        .grecaptcha-badge {
+            visibility: visible !important;
+            opacity: 1 !important;
+            z-index: 99999 !important;
+        }
+
+
+        /* Phone Number Input Styles */
+        .phone-input-group {
+            position: relative;
+            display: flex;
+        }
+
+        .country-code {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-right: none;
+            border-radius: 12px 0 0 12px;
+            font-weight: 600;
+            color: #495057;
+            z-index: 1;
+        }
+
+        .phone-input {
+            padding-left: 85px !important;
+        }
+
+        /* Validation message styling */
+        .validation-message {
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        .valid-message {
+            color: var(--primary-green);
+        }
+
+        .invalid-message {
+            color: var(--weak-red);
+        }
+
+        /* Password criteria styling */
+        .password-criteria {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: white;
+            border-radius: 10px;
+            border: 1px solid #dee2e6;
+        }
+
+        .criteria-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+            .criteria-item i {
+                margin-right: 0.5rem;
+                width: 20px;
+                text-align: center;
+            }
+
+            .criteria-item.met {
+                color: var(--primary-green);
+            }
+
+            .criteria-item.not-met {
+                color: #6c757d;
+            }
+
+        .password-requirements {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin: 1rem 0;
+        }
+
+        .gender-options {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .gender-option {
+            flex: 1;
+            min-width: 100px;
+        }
+
+            .gender-option input[type="radio"] {
+                display: none;
+            }
+
+            .gender-option label {
+                display: block;
+                padding: 1rem;
+                text-align: center;
+                border: 2px solid #e0e0e0;
+                border-radius: 10px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                background: white;
+            }
+
+            .gender-option input[type="radio"]:checked + label {
+                border-color: var(--primary-green);
+                background: rgba(46, 204, 113, 0.1);
+                color: var(--dark-green);
+                font-weight: bold;
+            }
+
+        .alert-success-custom {
+            background: linear-gradient(90deg, rgba(46, 204, 113, 0.1), rgba(39, 174, 96, 0.1));
+            border: 2px solid var(--primary-green);
+            color: var(--dark-green);
+            border-radius: 15px;
+            padding: 1.5rem;
+        }
+
+        .alert-danger-custom {
+            background: linear-gradient(90deg, rgba(220, 53, 69, 0.1), rgba(220, 53, 69, 0.05));
+            border: 2px solid var(--weak-red);
+            color: var(--weak-red);
+            border-radius: 15px;
+            padding: 1.5rem;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        @@keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        @@keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        @@keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @@keyframes ripple {
+            0% {
+                transform: scale(0, 0);
+                opacity: 1;
+            }
+
+            20% {
+                transform: scale(25, 25);
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+                transform: scale(40, 40);
+            }
+        }
+    </style>
+}
+
+<div class="register-container">
+    <div class="register-header">
+        <div class="farm-icon floating-animation">
+            <i class="fas fa-seedling"></i>
+        </div>
+        <h1 class="display-4 mb-3">Welcome to Fresh Farm Market!</h1>
+        <p class="lead mb-0">Join our community of fresh food lovers</p>
+        <div class="mt-4">
+            <i class="fas fa-leaf me-2"></i>
+            <i class="fas fa-apple-alt me-2"></i>
+            <i class="fas fa-carrot me-2"></i>
+            <i class="fas fa-egg me-2"></i>
+            <i class="fas fa-fish"></i>
+        </div>
+    </div>
+
+    <!-- Success/Error Messages -->
+    @if (ViewData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success-custom m-4">
+            <h4><i class="fas fa-check-circle me-2"></i> Success!</h4>
+            <p class="mb-0">@ViewData["SuccessMessage"]</p>
+        </div>
+    }
+
+    @if (ViewData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger-custom m-4">
+            <h4><i class="fas fa-exclamation-circle me-2"></i> Error!</h4>
+            <p class="mb-0">@ViewData["ErrorMessage"]</p>
+        </div>
+    }
+
+    <div class="row g-0">
+        <div class="col-lg-8">
+            <div class="form-section">
+                <form method="post" enctype="multipart/form-data" id="registerForm">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="RecaptchaToken" id="recaptchaToken" />
+
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger rounded-3"></div>
+
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label" asp-for="RModel.FullName">
+                                    <i class="fas fa-user"></i> Full Name
+                                </label>
+                                <input type="text" asp-for="RModel.FullName" class="form-control"
+                                       placeholder="Enter your full name" required value="@Model.RModel.FullName">
+                                <span asp-validation-for="RModel.FullName" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label" asp-for="RModel.Email">
+                                    <i class="fas fa-envelope"></i> Email Address
+                                </label>
+                                <input type="email" asp-for="RModel.Email" class="form-control"
+                                       id="emailInput" placeholder="you@example.com" required value="@Model.RModel.Email">
+                                <span asp-validation-for="RModel.Email" class="text-danger small"></span>
+                                <div class="mt-1 small" id="emailValidation"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label" asp-for="RModel.CreditCardNo">
+                                    <i class="fas fa-credit-card"></i> Credit Card Number
+                                </label>
+                                <input type="text" asp-for="RModel.CreditCardNo" class="form-control credit-card-input"
+                                       placeholder="1234 5678 9012 3456" maxlength="16" required
+                                       value="@Model.RModel.CreditCardNo">
+                                <span asp-validation-for="RModel.CreditCardNo" class="text-danger small"></span>
+                                <small class="text-muted"><i class="fas fa-lock me-1"></i>Encrypted for security</small>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-venus-mars"></i> Gender
+                                </label>
+                                <div class="gender-options">
+                                    <div class="gender-option">
+                                        @if (Model.RModel.Gender == "Male")
+                                        {
+                                            <input type="radio" asp-for="RModel.Gender" value="Male" id="male" checked>
+                                        }
+                                        else
+                                        {
+                                            <input type="radio" asp-for="RModel.Gender" value="Male" id="male">
+                                        }
+                                        <label for="male">
+                                            <i class="fas fa-mars me-2"></i>Male
+                                        </label>
+                                    </div>
+                                    <div class="gender-option">
+                                        @if (Model.RModel.Gender == "Female")
+                                        {
+                                            <input type="radio" asp-for="RModel.Gender" value="Female" id="female" checked>
+                                        }
+                                        else
+                                        {
+                                            <input type="radio" asp-for="RModel.Gender" value="Female" id="female">
+                                        }
+                                        <label for="female">
+                                            <i class="fas fa-venus me-2"></i>Female
+                                        </label>
+                                    </div>
+                                    <div class="gender-option">
+                                        @if (Model.RModel.Gender == "Other")
+                                        {
+                                            <input type="radio" asp-for="RModel.Gender" value="Other" id="other" checked>
+                                        }
+                                        else
+                                        {
+                                            <input type="radio" asp-for="RModel.Gender" value="Other" id="other">
+                                        }
+                                        <label for="other">
+                                            <i class="fas fa-genderless me-2"></i>Other
+                                        </label>
+                                    </div>
+                                </div>
+                                <span asp-validation-for="RModel.Gender" class="text-danger small"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label" asp-for="RModel.MobileNo">
+                                    <i class="fas fa-mobile-alt"></i> Mobile Number
+                                </label>
+                                <div class="phone-input-group">
+                                    <div class="country-code">+65</div>
+                                    <input type="text" asp-for="RModel.MobileNo" class="form-control phone-input"
+                                           id="mobileInput" placeholder="9123 4567" maxlength="8"
+                                           required value="@Model.RModel.MobileNo">
+                                </div>
+                                <span asp-validation-for="RModel.MobileNo" class="text-danger small"></span>
+                                <div id="mobileValidation" class="validation-message"></div>
+                                <small class="text-muted">Enter 8-digit Singapore number starting with 6, 8, or 9</small>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label" asp-for="RModel.DeliveryAddress">
+                                    <i class="fas fa-home"></i> Delivery Address
+                                </label>
+                                <textarea asp-for="RModel.DeliveryAddress" class="form-control"
+                                          rows="2" placeholder="Enter your complete delivery address" required>@Model.RModel.DeliveryAddress</textarea>
+                                <span asp-validation-for="RModel.DeliveryAddress" class="text-danger small"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label" asp-for="RModel.Password">
+                                    <i class="fas fa-lock"></i> Password
+                                </label>
+                                <input type="password" asp-for="RModel.Password" class="form-control"
+                                       id="passwordInput" placeholder="Create a strong password" required
+                                       value="@Model.RModel.Password" autocomplete="new-password">
+                                <span asp-validation-for="RModel.Password" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label" asp-for="RModel.ConfirmPassword">
+                                    <i class="fas fa-lock"></i> Confirm Password
+                                </label>
+                                <input type="password" asp-for="RModel.ConfirmPassword" class="form-control"
+                                       id="confirmPasswordInput" placeholder="Re-enter your password" required
+                                       value="@Model.RModel.ConfirmPassword" autocomplete="new-password">
+                                <span asp-validation-for="RModel.ConfirmPassword" class="text-danger small"></span>
+                                <div class="mt-1 small" id="passwordMatch"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Password Strength Indicator -->
+                    <div class="password-strength-container" id="passwordStrengthContainer">
+                        <div class="progress-label">
+                            <strong>Password Strength:</strong>
+                            <span id="strengthText" class="strength-text">Not set</span>
+                        </div>
+                        <div class="strength-meter">
+                            <div class="strength-fill" id="strengthFill"></div>
+                        </div>
+                        <div class="password-criteria">
+                            <div class="criteria-item" id="lengthCriteria">
+                                <i class="fas fa-times-circle text-danger"></i>
+                                <span>At least 12 characters</span>
+                            </div>
+                            <div class="criteria-item" id="lowerCriteria">
+                                <i class="fas fa-times-circle text-danger"></i>
+                                <span>Lowercase letter (a-z)</span>
+                            </div>
+                            <div class="criteria-item" id="upperCriteria">
+                                <i class="fas fa-times-circle text-danger"></i>
+                                <span>Uppercase letter (A-Z)</span>
+                            </div>
+                            <div class="criteria-item" id="numberCriteria">
+                                <i class="fas fa-times-circle text-danger"></i>
+                                <span>Number (0-9)</span>
+                            </div>
+                            <div class="criteria-item" id="specialCriteria">
+                                <i class="fas fa-times-circle text-danger"></i>
+                                <span>Special character (!&#64;#$%^&amp;*)</span>
+                            </div>
+                        </div>
+                        <div class="suggestions mt-2">
+                            <ul class="suggestion-list" id="suggestionList">
+                                @if (Model.PasswordSuggestions.Any())
+                                {
+                                    foreach (var suggestion in Model.PasswordSuggestions)
+                                    {
+                                        <li class="@(suggestion.StartsWith("✓") ? "valid" : "invalid")">
+                                            <i class="@(suggestion.StartsWith("✓") ? "fas fa-check-circle" : "fas fa-exclamation-circle")"></i>
+                                            @suggestion
+                                        </li>
+                                    }
+                                }
+                                else
+                                {
+                                    <li>Enter a password to see requirements</li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label" asp-for="RModel.Photo">
+                                    <i class="fas fa-camera"></i> Profile Photo (JPG only)
+                                </label>
+                                <div class="photo-upload" onclick="document.getElementById('photoInput').click()">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <p class="mb-2">Click to upload your photo</p>
+                                    <small class="text-muted">Max size: 5MB | Format: JPG only</small>
+
+                                    <input type="file" asp-for="RModel.Photo" id="photoInput"
+                                           accept=".jpg,.jpeg" style="display: none;">
+
+                                    <div class="mt-2" id="fileName"></div>
+
+                                    <!-- ✅ NEW: Preview -->
+                                    <div class="mt-3" id="photoPreviewWrap" style="display:none;">
+                                        <div class="d-flex justify-content-center">
+                                            <img id="photoPreview"
+                                                 alt="Photo preview"
+                                                 style="width: 180px; height: 180px; object-fit: cover; border-radius: 16px; border: 2px solid #d5f4e6; box-shadow: 0 10px 25px rgba(0,0,0,0.08);" />
+                                        </div>
+                                        <div class="text-center mt-2">
+                                            <span class="badge bg-success bg-opacity-10 text-success">
+                                                <i class="fas fa-eye me-1"></i> Preview Ready
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <span asp-validation-for="RModel.Photo" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label" asp-for="RModel.AboutMe">
+                                    <i class="fas fa-heart"></i> About Me
+                                </label>
+                                <textarea asp-for="RModel.AboutMe" class="form-control"
+                                          rows="4" placeholder="Tell us about yourself...">@Model.RModel.AboutMe</textarea>
+                                <span asp-validation-for="RModel.AboutMe" class="text-danger small"></span>
+                                <small class="text-muted">Share your food preferences, dietary needs, etc.</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="password-requirements">
+                        <h6 class="mb-3"><i class="fas fa-shield-alt me-2"></i>Security Features</h6>
+                        <div class="row">
+                            <div class="col-6">
+                                <p class="mb-1"><i class="fas fa-check-circle me-2"></i>Credit Card Encryption</p>
+                                <p class="mb-1"><i class="fas fa-check-circle me-2"></i>Password Hashing</p>
+                            </div>
+                            <div class="col-6">
+                                <p class="mb-1"><i class="fas fa-check-circle me-2"></i>Duplicate Email Check</p>
+                                <p class="mb-1"><i class="fas fa-check-circle me-2"></i>Secure File Upload</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group mt-4">
+                        <button type="submit" class="btn-register pulse-animation" id="submitBtn">
+                            <i class="fas fa-user-plus me-2"></i> Create Fresh Farm Account
+                        </button>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <p class="text-muted">
+                            Already have an account?
+                            <a href="/Login" class="text-success fw-bold">Sign In</a>
+                        </p>
+                        <small class="text-muted">
+                            By registering, you agree to our
+                            <a href="#" class="text-success">Terms of Service</a> and
+                            <a href="#" class="text-success">Privacy Policy</a>
+                        </small>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-lg-4" style="background: linear-gradient(135deg, #f8fff9 0%, #e8f5e9 100%);">
+            <div class="p-4">
+                <h4 class="mb-4 text-success">
+                    <i class="fas fa-gift me-2"></i> Membership Benefits
+                </h4>
+
+                <div class="feature-card">
+                    <i class="fas fa-shipping-fast"></i>
+                    <h5>Free Delivery</h5>
+                    <p class="mb-0">On orders above $50</p>
+                </div>
+
+                <div class="feature-card">
+                    <i class="fas fa-percentage"></i>
+                    <h5>Member Discounts</h5>
+                    <p class="mb-0">Exclusive deals up to 20% off</p>
+                </div>
+
+                <div class="feature-card">
+                    <i class="fas fa-seedling"></i>
+                    <h5>Fresh Produce</h5>
+                    <p class="mb-0">Direct from farm to your door</p>
+                </div>
+
+                <div class="feature-card">
+                    <i class="fas fa-award"></i>
+                    <h5>Reward Points</h5>
+                    <p class="mb-0">Earn points with every purchase</p>
+                </div>
+
+                <div class="mt-5">
+                    <h5 class="text-success mb-3">
+                        <i class="fas fa-lock me-2"></i> Your Data is Secure
+                    </h5>
+                    <div class="alert alert-success">
+                        <small>
+                            <i class="fas fa-check-circle me-1"></i>
+                            Military-grade encryption for sensitive data<br>
+                            <i class="fas fa-check-circle me-1"></i>
+                            Regular security audits<br>
+                            <i class="fas fa-check-circle me-1"></i>
+                            GDPR compliant
+                        </small>
+                    </div>
+                </div>
+
+                <div class="mt-4 text-center">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3095/3095105.png"
+                         alt="Fresh Farm" style="width: 120px; opacity: 0.8;" class="floating-animation">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        // Wait for DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, initializing form validators...');
+
+            // Mobile Number Validation
+            const mobileInput = document.getElementById('mobileInput');
+            const mobileValidation = document.getElementById('mobileValidation');
+
+            if (mobileInput) {
+                // Allow only numbers
+                mobileInput.addEventListener('input', function(e) {
+                    // Remove any non-digit characters
+                    this.value = this.value.replace(/\D/g, '');
+
+                    // Limit to 8 digits
+                    if (this.value.length > 8) {
+                        this.value = this.value.substring(0, 8);
+                    }
+
+                    validateMobileNumber();
+                });
+
+                function validateMobileNumber() {
+                    const value = mobileInput.value;
+
+                    if (!value) {
+                        mobileValidation.innerHTML = '';
+                        mobileInput.classList.remove('is-valid', 'is-invalid');
+                        return;
+                    }
+
+                    // Check if starts with 6, 8, or 9
+                    const validStart = /^[689]/.test(value);
+
+                    // Check if exactly 8 digits
+                    const validLength = value.length === 8;
+
+                    // Check if all numbers
+                    const validNumbers = /^\d+$/.test(value);
+
+                    if (validStart && validLength && validNumbers) {
+                        mobileValidation.innerHTML = '<div class="valid-message"><i class="fas fa-check-circle"></i> Valid Singapore mobile number</div>';
+                        mobileInput.classList.remove('is-invalid');
+                        mobileInput.classList.add('is-valid');
+                    } else {
+                        let errorMessage = '';
+
+                        if (!validStart && value.length > 0) {
+                            errorMessage = 'Mobile number must start with 6, 8, or 9';
+                        } else if (!validLength) {
+                            errorMessage = `Mobile number must be 8 digits (currently ${value.length})`;
+                        } else if (!validNumbers) {
+                            errorMessage = 'Mobile number must contain only numbers';
+                        }
+
+                        mobileValidation.innerHTML = `<div class="invalid-message"><i class="fas fa-times-circle"></i> ${errorMessage}</div>`;
+                        mobileInput.classList.remove('is-valid');
+                        mobileInput.classList.add('is-invalid');
+                    }
+                }
+
+                // Validate on page load if there's a value
+                if (mobileInput.value) {
+                    validateMobileNumber();
+                }
+            }
+
+            // Email duplication check
+            const emailInput = document.getElementById('emailInput');
+            if (emailInput) {
+                emailInput.addEventListener('blur', function() {
+                    const email = this.value.trim();
+                    if (!email) return;
+
+                    console.log('Checking email:', email);
+
+                    // Show loading
+                    const validationDiv = document.getElementById('emailValidation');
+                    validationDiv.innerHTML = '<div class="text-info"><i class="fas fa-spinner fa-spin"></i> Checking...</div>';
+
+                    fetch(`?handler=CheckEmail&email=${encodeURIComponent(email)}`)
+                        .then(response => {
+                            if (!response.ok) throw new Error('Network response was not ok');
+                            return response.json();
+                        })
+                        .then(data => {
+                            console.log('Email check response:', data);
+                            if (data.exists) {
+                                validationDiv.innerHTML = '<div class="text-danger"><i class="fas fa-times-circle"></i> This email is already registered</div>';
+                            } else {
+                                validationDiv.innerHTML = '<div class="text-success"><i class="fas fa-check-circle"></i> Email is available</div>';
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error checking email:', error);
+                            validationDiv.innerHTML = '<div class="text-warning"><i class="fas fa-exclamation-triangle"></i> Could not verify email</div>';
+                        });
+                });
+            }
+
+            // Password strength checker
+            function checkPasswordStrength(password) {
+                if (!password) {
+                    updateStrengthUI(0, 'Not set', '#6c757d');
+                    updateCriteria(false, false, false, false, false);
+                    return;
+                }
+
+                console.log('Checking password strength for:', password.substring(0, 3) + '...');
+
+                fetch(`?handler=CheckPassword&password=${encodeURIComponent(password)}`)
+                    .then(response => {
+                        if (!response.ok) throw new Error('Network response was not ok');
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Password strength response:', data);
+                        updateStrengthUI(data.score, data.strength, getStrengthColor(data.strength));
+                        updatePasswordCriteria(password);
+                        updateSuggestions(data.suggestions);
+
+                        // Enable/disable submit button based on password validity
+                        if (submitBtn) {
+                            submitBtn.disabled = !data.isValid;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error checking password strength:', error);
+                        updateStrengthUI(0, 'Error', '#dc3545');
+                    });
+            }
+
+            function updateStrengthUI(score, strength, color) {
+                // Update strength text
+                if (strengthText) {
+                    strengthText.textContent = strength;
+                    strengthText.style.color = color;
+                }
+
+                // Update strength fill
+                if (strengthFill) {
+                    strengthFill.style.width = score + '%';
+                    strengthFill.style.backgroundColor = color;
+
+                    // Add animation class
+                    strengthFill.classList.add('animated');
+                    setTimeout(function() {
+                        strengthFill.classList.remove('animated');
+                    }, 500);
+                }
+
+                // Update container border color
+                if (strengthContainer) {
+                    strengthContainer.style.borderColor = color;
+                    strengthContainer.style.boxShadow = '0 0 0 0.2rem ' + color + '20';
+                }
+            }
+
+            function getStrengthColor(strength) {
+                switch(strength.toLowerCase()) {
+                    case 'very weak': return '#dc3545';
+                    case 'weak': return '#fd7e14';
+                    case 'good': return '#ffc107';
+                    case 'strong': return '#20c997';
+                    case 'very strong': return '#28a745';
+                    default: return '#6c757d';
+                }
+            }
+
+            function updatePasswordCriteria(password) {
+                // Check each criteria
+                const hasLength = password.length >= 12;
+                const hasLower = /[a-z]/.test(password);
+                const hasUpper = /[A-Z]/.test(password);
+                const hasNumber = /\d/.test(password);
+                const hasSpecial = /[^\w\d\s]/.test(password);
+
+                updateCriteria(hasLength, hasLower, hasUpper, hasNumber, hasSpecial);
+            }
+
+            function updateCriteria(hasLength, hasLower, hasUpper, hasNumber, hasSpecial) {
+                // Update length criteria
+                const lengthCriteria = document.getElementById('lengthCriteria');
+                if (lengthCriteria) {
+                    lengthCriteria.className = 'criteria-item ' + (hasLength ? 'met' : 'not-met');
+                    lengthCriteria.innerHTML = '<i class="fas fa-' + (hasLength ? 'check' : 'times') + '-circle ' + (hasLength ? 'text-success' : 'text-danger') + '"></i>' +
+                                               '<span>At least 12 characters ' + (hasLength ? '(' + passwordInput.value.length + ')' : '') + '</span>';
+                }
+
+                // Update lowercase criteria
+                const lowerCriteria = document.getElementById('lowerCriteria');
+                if (lowerCriteria) {
+                    lowerCriteria.className = 'criteria-item ' + (hasLower ? 'met' : 'not-met');
+                    lowerCriteria.innerHTML = '<i class="fas fa-' + (hasLower ? 'check' : 'times') + '-circle ' + (hasLower ? 'text-success' : 'text-danger') + '"></i>' +
+                                              '<span>Lowercase letter (a-z)</span>';
+                }
+
+                // Update uppercase criteria
+                const upperCriteria = document.getElementById('upperCriteria');
+                if (upperCriteria) {
+                    upperCriteria.className = 'criteria-item ' + (hasUpper ? 'met' : 'not-met');
+                    upperCriteria.innerHTML = '<i class="fas fa-' + (hasUpper ? 'check' : 'times') + '-circle ' + (hasUpper ? 'text-success' : 'text-danger') + '"></i>' +
+                                              '<span>Uppercase letter (A-Z)</span>';
+                }
+
+                // Update number criteria
+                const numberCriteria = document.getElementById('numberCriteria');
+                if (numberCriteria) {
+                    numberCriteria.className = 'criteria-item ' + (hasNumber ? 'met' : 'not-met');
+                    numberCriteria.innerHTML = '<i class="fas fa-' + (hasNumber ? 'check' : 'times') + '-circle ' + (hasNumber ? 'text-success' : 'text-danger') + '"></i>' +
+                                               '<span>Number (0-9)</span>';
+                }
+
+                // Update special criteria
+                const specialCriteria = document.getElementById('specialCriteria');
+                if (specialCriteria) {
+                    specialCriteria.className = 'criteria-item ' + (hasSpecial ? 'met' : 'not-met');
+                    specialCriteria.innerHTML = '<i class="fas fa-' + (hasSpecial ? 'check' : 'times') + '-circle ' + (hasSpecial ? 'text-success' : 'text-danger') + '"></i>' +
+                                                '<span>Special character (!&#64;#$%^&amp;*)</span>';
+                }
+            }
+
+            function updateSuggestions(suggestions) {
+                const suggestionList = document.getElementById('suggestionList');
+                if (suggestionList && suggestions) {
+                    suggestionList.innerHTML = '';
+                    suggestions.forEach(function(suggestion) {
+                        const li = document.createElement('li');
+                        const isValid = suggestion.includes('✓') || suggestion.includes('Excellent') ||
+                                       suggestion.includes('currently') || suggestion.includes('characters');
+                        li.className = isValid ? 'valid' : 'invalid';
+                        li.innerHTML = '<i class="fas fa-' + (isValid ? 'check' : 'exclamation') + '-circle"></i> ' + suggestion;
+                        suggestionList.appendChild(li);
+                    });
+                }
+            }
+
+            // Password match checker
+            function checkPasswordMatch() {
+                const password = passwordInput.value;
+                const confirmPassword = confirmPasswordInput.value;
+                const matchDiv = document.getElementById('passwordMatch');
+
+                if (!matchDiv) return;
+
+                if (!password || !confirmPassword) {
+                    matchDiv.innerHTML = '';
+                    return;
+                }
+
+                if (password === confirmPassword) {
+                    matchDiv.innerHTML = '<div class="text-success"><i class="fas fa-check-circle"></i> Passwords match</div>';
+                } else {
+                    matchDiv.innerHTML = '<div class="text-danger"><i class="fas fa-times-circle"></i> Passwords do not match</div>';
+                }
+            }
+
+            // Initialize variables
+            const passwordInput = document.getElementById('passwordInput');
+            const confirmPasswordInput = document.getElementById('confirmPasswordInput');
+            const strengthText = document.getElementById('strengthText');
+            const strengthFill = document.getElementById('strengthFill');
+            const strengthContainer = document.getElementById('passwordStrengthContainer');
+            const submitBtn = document.getElementById('submitBtn');
+
+            // Event listeners for password
+            if (passwordInput) {
+                // Check on input
+                passwordInput.addEventListener('input', function() {
+                    checkPasswordStrength(this.value);
+                    checkPasswordMatch();
+                });
+
+                // Also check on page load if there's already a password
+                if (passwordInput.value) {
+                    setTimeout(function() {
+                        checkPasswordStrength(passwordInput.value);
+                        checkPasswordMatch();
+                    }, 100);
+                }
+            }
+
+            if (confirmPasswordInput) {
+                confirmPasswordInput.addEventListener('input', checkPasswordMatch);
+            }
+
+        // File upload display + ✅ JPG Preview
+        const photoInput = document.getElementById('photoInput');
+        if (photoInput) {
+            photoInput.addEventListener('change', function (e) {
+                const file = e.target.files && e.target.files[0] ? e.target.files[0] : null;
+
+                const fileNameDiv = document.getElementById('fileName');
+                const previewWrap = document.getElementById('photoPreviewWrap');
+                const previewImg = document.getElementById('photoPreview');
+
+                if (!file) {
+                    if (fileNameDiv) fileNameDiv.innerHTML = '';
+                    if (previewWrap) previewWrap.style.display = 'none';
+                    if (previewImg) previewImg.removeAttribute('src');
+                    return;
+                }
+
+                const name = file.name || '';
+                const lower = name.toLowerCase();
+                const isJpg = lower.endsWith('.jpg') || lower.endsWith('.jpeg');
+                const maxSize = 5 * 1024 * 1024;
+
+                // Client-side guard (server-side validation already exists in your Register.cshtml.cs)
+                if (!isJpg) {
+                    alert('Only JPG/JPEG files are allowed.');
+                    photoInput.value = '';
+                    if (fileNameDiv) fileNameDiv.innerHTML = '';
+                    if (previewWrap) previewWrap.style.display = 'none';
+                    if (previewImg) previewImg.removeAttribute('src');
+                    return;
+                }
+
+                if (file.size > maxSize) {
+                    alert('File size cannot exceed 5MB.');
+                    photoInput.value = '';
+                    if (fileNameDiv) fileNameDiv.innerHTML = '';
+                    if (previewWrap) previewWrap.style.display = 'none';
+                    if (previewImg) previewImg.removeAttribute('src');
+                    return;
+                }
+
+                if (fileNameDiv) {
+                    fileNameDiv.innerHTML =
+                        '<span class="badge bg-success"><i class="fas fa-file-image me-1"></i> ' + name + '</span>';
+                }
+
+                // Preview via FileReader
+                const reader = new FileReader();
+                reader.onload = function (evt) {
+                    if (previewImg && evt.target && evt.target.result) {
+                        previewImg.src = evt.target.result;
+                    }
+                    if (previewWrap) previewWrap.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+
+            // Credit card formatting
+            const creditCardInput = document.querySelector('.credit-card-input');
+            if (creditCardInput) {
+                creditCardInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    value = value.substring(0, 16);
+                    e.target.value = value;
+                });
+            }
+
+            // Form submission handling
+            const form = document.getElementById('registerForm');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    console.log('Form submitting...');
+
+                    // Validate mobile number on submit
+                    if (mobileInput && mobileInput.value) {
+                        const mobileValue = mobileInput.value;
+                        const validStart = /^[689]/.test(mobileValue);
+                        const validLength = mobileValue.length === 8;
+                        const validNumbers = /^\d+$/.test(mobileValue);
+
+                        if (!validStart || !validLength || !validNumbers) {
+                            e.preventDefault();
+                            alert('Please enter a valid Singapore mobile number (8 digits starting with 6, 8, or 9)');
+                            mobileInput.focus();
+                            return;
+                        }
+                    }
+
+                    const password = passwordInput.value;
+
+                    // Final password check
+                    if (password) {
+                        const hasLength = password.length >= 12;
+                        const hasLower = /[a-z]/.test(password);
+                        const hasUpper = /[A-Z]/.test(password);
+                        const hasNumber = /\d/.test(password);
+                        const hasSpecial = /[^\w\d\s]/.test(password);
+
+                        if (!hasLength || !hasLower || !hasUpper || !hasNumber || !hasSpecial) {
+                            e.preventDefault();
+                            alert('Please ensure your password meets all requirements before submitting.');
+                            return;
+                        }
+                    }
+
+                    // Show loading state
+                    if (submitBtn) {
+                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Creating Account...';
+                        submitBtn.disabled = true;
+                        submitBtn.classList.remove('pulse-animation');
+                    }
+                });
+            }
+
+            console.log('Form validators initialized successfully');
+        });
+    </script>
+
+    <script src="https://www.google.com/recaptcha/api.js?render=@Model.RecaptchaSiteKey"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (!"@Model.RecaptchaSiteKey") return;
+
+            grecaptcha.ready(function () {
+                grecaptcha.execute("@Model.RecaptchaSiteKey", { action: 'register' }).then(function (token) {
+                    const el = document.getElementById('recaptchaToken');
+                    if (el) el.value = token;
+                });
+            });
+
+            const form = document.querySelector('form');
+            if (form) {
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    grecaptcha.execute("@Model.RecaptchaSiteKey", { action: 'register' }).then(function (token) {
+                        const el = document.getElementById('recaptchaToken');
+                        if (el) el.value = token;
+                        form.submit();
+                    });
+                });
+            }
+        });
+    </script>
+
+}

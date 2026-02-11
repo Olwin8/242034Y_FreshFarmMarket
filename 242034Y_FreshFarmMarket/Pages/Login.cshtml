@@ -1,0 +1,237 @@
+﻿@page
+@model _242034Y_FreshFarmMarket.Pages.LoginModel
+@{
+    ViewData["Title"] = "Login - Fresh Farm Market";
+    Layout = "_Layout";
+}
+
+@section Styles {
+    <style>
+        :root {
+            --primary-green: #2ecc71;
+            --dark-green: #27ae60;
+            --light-green: #d5f4e6;
+            --cream-white: #f9f6f0;
+            --leaf-green: #229954;
+            --success-gradient: linear-gradient(90deg, #2ecc71, #229954);
+        }
+
+        body {
+            background: linear-gradient(135deg, #f9f6f0 0%, #e8f5e9 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 25px;
+            box-shadow: 0 20px 60px rgba(46, 204, 113, 0.15);
+            overflow: hidden;
+            border: 2px solid var(--light-green);
+            position: relative;
+            margin: 2rem auto;
+            max-width: 700px;
+        }
+
+        .login-header {
+            background: var(--success-gradient);
+            color: white;
+            padding: 2.2rem;
+            text-align: center;
+        }
+
+        .form-section {
+            padding: 2.5rem;
+        }
+
+        .form-control {
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 1rem 1.2rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: var(--cream-white);
+        }
+
+            .form-control:focus {
+                border-color: var(--primary-green);
+                box-shadow: 0 0 0 0.25rem rgba(46, 204, 113, 0.25);
+                background: white;
+            }
+
+        .btn-login {
+            background: var(--success-gradient);
+            border: none;
+            color: white;
+            padding: 1.1rem 2rem;
+            border-radius: 15px;
+            font-size: 1.15rem;
+            font-weight: 600;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+            .btn-login:disabled {
+                opacity: 0.55;
+                cursor: not-allowed;
+            }
+
+        /* ✅ Add-on only (small info rows) */
+        .attempt-box {
+            margin-top: 1rem;
+            padding: 1rem 1.1rem;
+            border-radius: 14px;
+            border: 1px solid #dee2e6;
+            background: #f8f9fa;
+        }
+
+        .attempt-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .lock-text {
+            margin-top: .6rem;
+            font-weight: 700;
+            color: #c0392b;
+        }
+    </style>
+}
+
+<div class="login-container">
+    <div class="login-header">
+        <h2 class="mb-0"><i class="fas fa-sign-in-alt me-2"></i>Sign In</h2>
+        <p class="mb-0" style="opacity:.95;">Secure login (lockout after 3 failed attempts)</p>
+    </div>
+
+    <div class="form-section">
+        <form method="post" id="loginForm">
+            <!-- ✅ ADD: reCAPTCHA token -->
+            <input type="hidden" name="RecaptchaToken" id="recaptchaToken" />
+
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger rounded-3"></div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Email Address</label>
+                <input asp-for="LModel.Email" class="form-control" placeholder="you@example.com" />
+                <span asp-validation-for="LModel.Email" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Password</label>
+                <input asp-for="LModel.Password" class="form-control" placeholder="Enter your password" />
+                <span asp-validation-for="LModel.Password" class="text-danger small"></span>
+            </div>
+
+            <!-- ✅ Add-on: Attempts + lock countdown -->
+            <div class="attempt-box">
+                <div class="attempt-row">
+                    <div><i class="fas fa-times-circle me-1"></i> Failed attempts used:</div>
+                    <div><strong id="attemptUsed">@Model.FailedAttemptsUsed</strong>/3</div>
+                </div>
+                <div class="attempt-row mt-1">
+                    <div><i class="fas fa-undo me-1"></i> Attempts left:</div>
+                    <div><strong id="attemptLeft">@Model.AttemptsLeft</strong></div>
+                </div>
+
+                @if (Model.IsLockedOut)
+                {
+                    <div class="lock-text">
+                        <i class="fas fa-lock me-1"></i>
+                        Locked. Try again in <span id="lockoutTimer">00:00</span>
+                    </div>
+                }
+            </div>
+
+            <div class="mt-4">
+                <button type="submit" class="btn-login" id="loginBtn">
+                    <i class="fas fa-sign-in-alt me-2"></i> Login
+                </button>
+            </div>
+
+            <!-- ✅ ONLY CHANGE: Forgot password link -->
+            <div class="text-center mt-3">
+                <a href="/ForgotPassword" class="text-success fw-bold">Forgot password?</a>
+            </div>
+
+            <div class="text-center mt-4">
+                <p class="text-muted mb-0">
+                    No account yet?
+                    <a href="/Register" class="text-success fw-bold">Create one</a>
+                </p>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        (function () {
+            const isLocked = @Model.IsLockedOut.ToString().ToLower();
+            const seconds = @Model.LockoutSecondsRemaining;
+            const btn = document.getElementById('loginBtn');
+            const timerEl = document.getElementById('lockoutTimer');
+
+            function fmt(sec) {
+                const m = Math.floor(sec / 60);
+                const s = sec % 60;
+                return `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+            }
+
+            if (!isLocked) {
+                if (btn) btn.disabled = false;
+                return;
+            }
+
+            if (btn) btn.disabled = true;
+
+            let remaining = seconds || 0;
+            if (timerEl) timerEl.textContent = fmt(remaining);
+
+            const interval = setInterval(() => {
+                remaining--;
+                if (timerEl) timerEl.textContent = fmt(Math.max(0, remaining));
+
+                if (remaining <= 0) {
+                    clearInterval(interval);
+                    if (btn) btn.disabled = false;
+                }
+            }, 1000);
+        })();
+    </script>
+
+    <!-- ✅ ADD: reCAPTCHA v3 (badge appears when this loads + execute runs) -->
+    <script src="https://www.google.com/recaptcha/api.js?render=@Model.RecaptchaSiteKey"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (!"@Model.RecaptchaSiteKey") return;
+
+            function setTokenAndSubmit(form) {
+                grecaptcha.execute("@Model.RecaptchaSiteKey", { action: 'login' }).then(function (token) {
+                    const el = document.getElementById('recaptchaToken');
+                    if (el) el.value = token;
+                    form.submit();
+                });
+            }
+
+            grecaptcha.ready(function () {
+                grecaptcha.execute("@Model.RecaptchaSiteKey", { action: 'login' }).then(function (token) {
+                    const el = document.getElementById('recaptchaToken');
+                    if (el) el.value = token;
+                });
+            });
+
+            const form = document.getElementById('loginForm');
+            if (form) {
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    setTokenAndSubmit(form);
+                });
+            }
+        });
+    </script>
+}

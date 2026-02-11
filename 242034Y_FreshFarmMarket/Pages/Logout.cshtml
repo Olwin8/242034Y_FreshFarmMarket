@@ -1,0 +1,19 @@
+﻿@page
+@model _242034Y_FreshFarmMarket.Pages.LogoutModel
+@{
+    ViewData["Title"] = "Logout";
+    Layout = "_Layout";
+}
+
+<div class="container" style="max-width:700px; margin-top:40px;">
+    <div class="alert alert-info">
+        Logging you out...
+    </div>
+
+    <form method="post">
+        @Html.AntiForgeryToken()
+        <button type="submit" class="btn btn-success">
+            Click here if you are not redirected
+        </button>
+    </form>
+</div>
