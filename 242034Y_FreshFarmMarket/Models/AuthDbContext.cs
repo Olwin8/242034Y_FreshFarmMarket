@@ -17,6 +17,9 @@ namespace _242034Y_FreshFarmMarket.Models
         // ✅ NEW: Password history
         public DbSet<PasswordHistory> PasswordHistories { get; set; }
 
+        // ✅ ADD: Password reset requests (token escrow)
+        public DbSet<PasswordResetRequest> PasswordResetRequests { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -85,6 +88,19 @@ namespace _242034Y_FreshFarmMarket.Models
 
                 entity.Property(p => p.PasswordHash)
                       .HasMaxLength(500);
+            });
+
+            // ✅ ADD: PasswordResetRequest (indexes + constraints)
+            builder.Entity<PasswordResetRequest>(entity =>
+            {
+                entity.HasIndex(r => r.RequestId).IsUnique();
+                entity.HasIndex(r => r.UserId);
+                entity.HasIndex(r => r.Email);
+                entity.HasIndex(r => r.ExpiresAt);
+                entity.HasIndex(r => r.Used);
+
+                entity.Property(r => r.RequestId).HasMaxLength(64);
+                entity.Property(r => r.Email).HasMaxLength(256);
             });
         }
     }

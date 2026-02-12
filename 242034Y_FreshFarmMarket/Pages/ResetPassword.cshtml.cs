@@ -3,6 +3,7 @@ using _242034Y_FreshFarmMarket.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
 namespace _242034Y_FreshFarmMarket.Pages
@@ -14,26 +15,31 @@ namespace _242034Y_FreshFarmMarket.Pages
         private readonly IPasswordHistoryService _passwordHistoryService;
         private readonly IAuditLogService _auditLogService;
         private readonly IConfiguration _configuration;
+        private readonly AuthDbContext _db; // ✅ ADD
 
         public ResetPasswordModel(
             UserManager<ApplicationUser> userManager,
             IPasswordStrengthService passwordStrengthService,
             IPasswordHistoryService passwordHistoryService,
             IAuditLogService auditLogService,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            AuthDbContext db) // ✅ ADD
         {
             _userManager = userManager;
             _passwordStrengthService = passwordStrengthService;
             _passwordHistoryService = passwordHistoryService;
             _auditLogService = auditLogService;
             _configuration = configuration;
+            _db = db; // ✅ ADD
         }
 
+        // ✅ rid from email link
+        [BindProperty(SupportsGet = true), Required]
+        public string Rid { get; set; } = string.Empty;
+
+        // ✅ keep Email hidden (like your original)
         [BindProperty, Required, EmailAddress]
         public string Email { get; set; } = string.Empty;
-
-        [BindProperty, Required]
-        public string Token { get; set; } = string.Empty;
 
         [BindProperty, Required, DataType(DataType.Password)]
         public string NewPassword { get; set; } = string.Empty;
@@ -42,13 +48,28 @@ namespace _242034Y_FreshFarmMarket.Pages
         [Compare("NewPassword", ErrorMessage = "Confirm password must match the new password.")]
         public string ConfirmPassword { get; set; } = string.Empty;
 
-        public IActionResult OnGet(string email, string token)
+        public async Task<IActionResult> OnGetAsync(string rid)
         {
-            if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(token))
+            if (string.IsNullOrWhiteSpace(rid))
                 return RedirectToPage("/Login");
 
-            Email = email;
-            Token = token;
+            Rid = rid.Trim();
+
+            // ✅ find valid request
+            var req = await _db.PasswordResetRequests
+                .AsNoTracking()
+                .FirstOrDefaultAsync(r =>
+                    r.RequestId == Rid &&
+                    r.Used == false &&
+                    r.ExpiresAt > DateTime.Now);
+
+            if (req == null)
+            {
+                TempData["Error"] = "Reset link is invalid or expired.";
+                return RedirectToPage("/ForgotPassword");
+            }
+
+            Email = req.Email;
             return Page();
         }
 
@@ -56,8 +77,36 @@ namespace _242034Y_FreshFarmMarket.Pages
         {
             if (!ModelState.IsValid) return Page();
 
-            var user = await _userManager.FindByEmailAsync(Email.Trim());
+            var rid = (Rid ?? "").Trim();
+            if (string.IsNullOrEmpty(rid))
+            {
+                ModelState.AddModelError(string.Empty, "Invalid reset request.");
+                return Page();
+            }
+
+            // ✅ load request (must still be valid)
+            var req = await _db.PasswordResetRequests
+                .FirstOrDefaultAsync(r =>
+                    r.RequestId == rid &&
+                    r.Used == false &&
+                    r.ExpiresAt > DateTime.Now);
+
+            if (req == null)
+            {
+                TempData["Error"] = "Reset link is invalid or expired.";
+                return RedirectToPage("/ForgotPassword");
+            }
+
+            // ✅ user must match request
+            var user = await _userManager.FindByIdAsync(req.UserId);
             if (user == null)
+            {
+                ModelState.AddModelError(string.Empty, "Invalid reset request.");
+                return Page();
+            }
+
+            // ✅ ensure email matches (anti-tamper)
+            if (!string.Equals((user.Email ?? "").Trim(), (req.Email ?? "").Trim(), StringComparison.OrdinalIgnoreCase))
             {
                 ModelState.AddModelError(string.Empty, "Invalid reset request.");
                 return Page();
@@ -95,7 +144,10 @@ namespace _242034Y_FreshFarmMarket.Pages
 
             var oldHash = user.PasswordHash ?? string.Empty;
 
-            var result = await _userManager.ResetPasswordAsync(user, Token, NewPassword);
+            // ✅ Use token from DB (server-side)
+            var token = req.Token;
+
+            var result = await _userManager.ResetPasswordAsync(user, token, NewPassword);
             if (!result.Succeeded)
             {
                 foreach (var err in result.Errors)
@@ -108,6 +160,11 @@ namespace _242034Y_FreshFarmMarket.Pages
 
             user.LastPasswordChangeDate = DateTime.Now;
             await _userManager.UpdateAsync(user);
+
+            // ✅ mark request used
+            req.Used = true;
+            req.UsedAt = DateTime.Now;
+            await _db.SaveChangesAsync();
 
             var ip = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "Unknown";
             var ua = HttpContext.Request.Headers["User-Agent"].ToString();

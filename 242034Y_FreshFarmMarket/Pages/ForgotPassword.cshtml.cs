@@ -13,17 +13,20 @@ namespace _242034Y_FreshFarmMarket.Pages
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IEmailSenderService _emailSender;
         private readonly IAuditLogService _auditLogService;
+        private readonly AuthDbContext _db; // ✅ ADD
         private readonly ILogger<ForgotPasswordModel> _logger;
 
         public ForgotPasswordModel(
             UserManager<ApplicationUser> userManager,
             IEmailSenderService emailSender,
             IAuditLogService auditLogService,
+            AuthDbContext db, // ✅ ADD
             ILogger<ForgotPasswordModel> logger)
         {
             _userManager = userManager;
             _emailSender = emailSender;
             _auditLogService = auditLogService;
+            _db = db; // ✅ ADD
             _logger = logger;
         }
 
@@ -62,12 +65,32 @@ namespace _242034Y_FreshFarmMarket.Pages
             user.LastPasswordResetRequest = DateTime.Now;
             await _userManager.UpdateAsync(user);
 
+            // ✅ Generate token (DO NOT send token in email)
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
+            // ✅ Create safe request id to send via email
+            var rid = Guid.NewGuid().ToString("N");
+
+            // ✅ Store token server-side with expiry
+            var req = new PasswordResetRequest
+            {
+                RequestId = rid,
+                UserId = user.Id,
+                Email = user.Email ?? email,
+                Token = token,
+                CreatedAt = DateTime.Now,
+                ExpiresAt = DateTime.Now.AddMinutes(15),
+                Used = false
+            };
+
+            _db.PasswordResetRequests.Add(req);
+            await _db.SaveChangesAsync();
+
+            // ✅ Email link only contains rid (safe)
             var callbackUrl = Url.Page(
                 "/ResetPassword",
                 pageHandler: null,
-                values: new { email = user.Email, token },
+                values: new { rid },
                 protocol: "https");
 
             var safeUrl = HtmlEncoder.Default.Encode(callbackUrl ?? "");
@@ -77,6 +100,7 @@ namespace _242034Y_FreshFarmMarket.Pages
                 <p>Hi,</p>
                 <p>You requested to reset your password.</p>
                 <p><a href=""{safeUrl}"">Click here to reset your password</a></p>
+                <p>This link will expire in 15 minutes.</p>
                 <p>If you did not request this, please ignore this email.</p>
             ";
 
