@@ -68,7 +68,7 @@ namespace _242034Y_FreshFarmMarket.Pages
                 "/ResetPassword",
                 pageHandler: null,
                 values: new { email = user.Email, token },
-                protocol: Request.Scheme);
+                protocol: "https");
 
             var safeUrl = HtmlEncoder.Default.Encode(callbackUrl ?? "");
 

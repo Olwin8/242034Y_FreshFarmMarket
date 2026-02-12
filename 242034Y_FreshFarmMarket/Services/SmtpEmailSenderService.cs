@@ -25,15 +25,21 @@ namespace _242034Y_FreshFarmMarket.Services
 
             if (string.IsNullOrWhiteSpace(host) ||
                 string.IsNullOrWhiteSpace(portStr) ||
+                string.IsNullOrWhiteSpace(enableSslStr) ||
                 string.IsNullOrWhiteSpace(username) ||
                 string.IsNullOrWhiteSpace(password) ||
                 string.IsNullOrWhiteSpace(fromEmail))
             {
-                throw new InvalidOperationException("SMTP settings are missing in appsettings.json");
+                throw new InvalidOperationException("SMTP settings are missing or incomplete in appsettings.json");
             }
 
             int port = int.Parse(portStr);
             bool enableSsl = bool.TryParse(enableSslStr, out var v) && v;
+
+            if (!enableSsl)
+            {
+                throw new InvalidOperationException("SMTP SSL/TLS must be enabled (Smtp:EnableSsl = true) when sending sensitive emails.");
+            }
 
             using var message = new MailMessage();
             message.From = new MailAddress(fromEmail, fromName ?? "Fresh Farm Market");
