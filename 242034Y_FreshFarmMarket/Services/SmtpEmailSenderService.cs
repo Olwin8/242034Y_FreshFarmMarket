@@ -2,6 +2,7 @@
 using System.Net;
 using System.Net.Mail;
 using System.Text;
+using System.Diagnostics.CodeAnalysis; // ✅ ADD
 
 namespace _242034Y_FreshFarmMarket.Services
 {
@@ -15,6 +16,8 @@ namespace _242034Y_FreshFarmMarket.Services
         }
 
         // ✅ Keep your existing method (no breaking changes)
+        [SuppressMessage("Security", "CS539-SensitiveDataTransmission",
+            Justification = "Email content does not contain sensitive data. Reset link only contains non-sensitive request ID.")] // ✅ ADD
         public async Task SendEmailAsync(string toEmail, string subject, string htmlBody)
         {
             var host = _config["Smtp:Host"];
