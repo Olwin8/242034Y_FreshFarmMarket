@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using System.Net;
 using System.Net.Mail;
+using System.Text;
 
 namespace _242034Y_FreshFarmMarket.Services
 {
@@ -45,8 +46,18 @@ namespace _242034Y_FreshFarmMarket.Services
             message.From = new MailAddress(fromEmail, fromName ?? "Fresh Farm Market");
             message.To.Add(toEmail);
             message.Subject = subject;
+            // Ensure body is not null and prevent unintended raw data exposure
+            if (string.IsNullOrWhiteSpace(htmlBody))
+            {
+                throw new InvalidOperationException("Email body cannot be empty.");
+            }
+
+            // OPTIONAL but recommended: enforce HTML-only safe content
             message.Body = htmlBody;
             message.IsBodyHtml = true;
+            message.BodyEncoding = System.Text.Encoding.UTF8;
+            message.SubjectEncoding = System.Text.Encoding.UTF8;
+
 
             using var client = new SmtpClient(host, port);
             client.EnableSsl = enableSsl;
