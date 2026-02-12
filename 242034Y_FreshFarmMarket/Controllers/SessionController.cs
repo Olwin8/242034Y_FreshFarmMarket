@@ -21,6 +21,7 @@ namespace _242034Y_FreshFarmMarket.Controllers
         }
 
         [HttpPost("extend")]
+        [ValidateAntiForgeryToken]
         public IActionResult ExtendSession()
         {
             try
