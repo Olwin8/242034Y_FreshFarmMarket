@@ -127,8 +127,8 @@ namespace _242034Y_FreshFarmMarket.Pages
                 lockoutOnFailure: true);
 
             _logger.LogWarning(
-                "Login result for {Email}: Succeeded={Succeeded}, RequiresTwoFactor={RequiresTwoFactor}, IsLockedOut={IsLockedOut}, IsNotAllowed={IsNotAllowed}",
-                email, result.Succeeded, result.RequiresTwoFactor, result.IsLockedOut, result.IsNotAllowed);
+                "Login result: Succeeded={Succeeded}, RequiresTwoFactor={RequiresTwoFactor}, IsLockedOut={IsLockedOut}, IsNotAllowed={IsNotAllowed}",
+                result.Succeeded, result.RequiresTwoFactor, result.IsLockedOut, result.IsNotAllowed);
 
             if (result.RequiresTwoFactor)
             {
