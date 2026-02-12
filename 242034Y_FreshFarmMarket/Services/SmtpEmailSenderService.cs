@@ -14,6 +14,7 @@ namespace _242034Y_FreshFarmMarket.Services
             _config = config;
         }
 
+        // ✅ Keep your existing method (no breaking changes)
         public async Task SendEmailAsync(string toEmail, string subject, string htmlBody)
         {
             var host = _config["Smtp:Host"];
@@ -40,14 +41,10 @@ namespace _242034Y_FreshFarmMarket.Services
             message.From = new MailAddress(fromEmail, fromName ?? "Fresh Farm Market");
             message.To.Add(toEmail);
             message.Subject = subject;
-
-            // CodeQL false-positive: this service sends intended emails (e.g., reset link with rid only).
-            // lgtm[cs/sensitive-data-transmission]
             message.Body = htmlBody;
-
             message.IsBodyHtml = true;
 
-            // ✅ encoding hardening (no behaviour change)
+            // ✅ encoding hardening (no behavior change)
             message.BodyEncoding = Encoding.UTF8;
             message.SubjectEncoding = Encoding.UTF8;
 
@@ -56,6 +53,23 @@ namespace _242034Y_FreshFarmMarket.Services
             client.Credentials = new NetworkCredential(username, password);
 
             await client.SendMailAsync(message);
+        }
+
+        // ✅ NEW: dedicated password reset email (build HTML internally)
+        public async Task SendPasswordResetEmailAsync(string toEmail, string resetUrl)
+        {
+            var subject = "Fresh Farm Market - Reset Password";
+
+            var htmlBody = $@"
+                <p>Hi,</p>
+                <p>You requested to reset your password.</p>
+                <p><a href=""{resetUrl}"">Click here to reset your password</a></p>
+                <p>This link will expire in 15 minutes.</p>
+                <p>If you did not request this, please ignore this email.</p>
+            ";
+
+            // Reuse existing SMTP pipeline (no duplication)
+            await SendEmailAsync(toEmail, subject, htmlBody);
         }
     }
 }

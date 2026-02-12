@@ -97,19 +97,9 @@ namespace _242034Y_FreshFarmMarket.Pages
 
             var subject = "Fresh Farm Market - Reset Password";
 
-            // CodeQL false-positive: email contains ONLY a safe rid link (token is stored server-side).
-            // lgtm[cs/sensitive-data-transmission]
-            var body = $@"
-                <p>Hi,</p>
-                <p>You requested to reset your password.</p>
-                <p><a href=""{safeUrl}"">Click here to reset your password</a></p>
-                <p>This link will expire in 15 minutes.</p>
-                <p>If you did not request this, please ignore this email.</p>
-            ";
-
             try
             {
-                await _emailSender.SendEmailAsync(user.Email!, subject, body);
+                await _emailSender.SendPasswordResetEmailAsync(user.Email!, safeUrl);
 
                 await _auditLogService.LogSecurityEventAsync(
                     user.Id,
