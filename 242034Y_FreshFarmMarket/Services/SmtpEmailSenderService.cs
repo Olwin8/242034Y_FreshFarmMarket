@@ -2,6 +2,7 @@
 using System.Net;
 using System.Net.Mail;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace _242034Y_FreshFarmMarket.Services
 {
@@ -52,6 +53,9 @@ namespace _242034Y_FreshFarmMarket.Services
                 throw new InvalidOperationException("Email body cannot be empty.");
             }
 
+            // Validate that the HTML body does not contain unsafe or non-HTTPS links
+            ValidateEmailBody(htmlBody);
+
             // OPTIONAL but recommended: enforce HTML-only safe content
             message.Body = htmlBody;
             message.IsBodyHtml = true;
@@ -64,6 +68,46 @@ namespace _242034Y_FreshFarmMarket.Services
             client.Credentials = new NetworkCredential(username, password);
 
             await client.SendMailAsync(message);
+        }
+
+        /// <summary>
+        /// Performs basic validation on the HTML email body to reduce the risk of
+        /// transmitting attacker-controlled or unsafe links to the user.
+        /// </summary>
+        /// <param name="htmlBody">The HTML body to validate.</param>
+        /// <exception cref="InvalidOperationException">
+        /// Thrown when the body contains disallowed or unsafe links.
+        /// </exception>
+        private static void ValidateEmailBody(string htmlBody)
+        {
+            // Match href attributes in <a> tags: href="..." or href='...'
+            var hrefPattern = "href\\s*=\\s*\"(?<url>[^\"]*)\"|href\\s*=\\s*'(?<url>[^']*)'";
+            var matches = Regex.Matches(htmlBody, hrefPattern, RegexOptions.IgnoreCase);
+
+            foreach (Match match in matches)
+            {
+                var url = match.Groups["url"].Value.Trim();
+                if (string.IsNullOrEmpty(url))
+                {
+                    continue;
+                }
+
+                // Disallow javascript: and other executable schemes
+                if (url.StartsWith("javascript:", StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new InvalidOperationException("Email contains disallowed links.");
+                }
+
+                // If absolute URL, require HTTPS scheme
+                if (Uri.TryCreate(url, UriKind.Absolute, out var uri))
+                {
+                    if (!uri.Scheme.Equals(Uri.UriSchemeHttps, StringComparison.OrdinalIgnoreCase))
+                    {
+                        throw new InvalidOperationException("Email contains non-HTTPS links, which are not allowed.");
+                    }
+                }
+                // Relative URLs are allowed (they will resolve against the application's host).
+            }
         }
     }
 }
