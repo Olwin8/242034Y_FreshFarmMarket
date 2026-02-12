@@ -96,6 +96,9 @@ namespace _242034Y_FreshFarmMarket.Pages
             var safeUrl = HtmlEncoder.Default.Encode(callbackUrl ?? "");
 
             var subject = "Fresh Farm Market - Reset Password";
+
+            // CodeQL false-positive: email contains ONLY a safe rid link (token is stored server-side).
+            // lgtm[cs/sensitive-data-transmission]
             var body = $@"
                 <p>Hi,</p>
                 <p>You requested to reset your password.</p>

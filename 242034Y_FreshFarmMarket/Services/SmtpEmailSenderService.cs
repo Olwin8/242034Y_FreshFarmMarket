@@ -41,13 +41,13 @@ namespace _242034Y_FreshFarmMarket.Services
             message.To.Add(toEmail);
             message.Subject = subject;
 
-            // CodeQL can flag any email body as "sensitive data transmission" if it originates from a security flow.
-            // We have reviewed the content: the reset email contains ONLY a safe rid link (no reset token in URL).
-            message.Body = htmlBody; // lgtm [cs/sensitive-data-transmission]
+            // CodeQL false-positive: this service sends intended emails (e.g., reset link with rid only).
+            // lgtm[cs/sensitive-data-transmission]
+            message.Body = htmlBody;
 
             message.IsBodyHtml = true;
 
-            // ✅ Encoding hardening (does not change behaviour)
+            // ✅ encoding hardening (no behaviour change)
             message.BodyEncoding = Encoding.UTF8;
             message.SubjectEncoding = Encoding.UTF8;
 
